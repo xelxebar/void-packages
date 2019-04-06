@@ -1,0 +1,14 @@
+# Template file for 'ibus-table'
+pkgname=ibus-table
+version=1.9.21
+revision=1
+build_style=gnu-configure
+hostmakedepends="pkg-config python3"
+makedepends="ibus-devel"
+depends="ibus"
+short_desc="IBus framework for table-based input methods"
+maintainer="B. Wilson <x@wilsonb.com>"
+license="LGPL-2.1-or-later"
+homepage="https://github.com/kaio/ibus-table"
+distfiles="https://github.com/kaio/${pkgname}/releases/download/${version}/${pkgname}-${version}.tar.gz"
+checksum=017bcd1cb9f5a79df46d1e4ac28f166ce2338938a2037ebe86783da0abca0c24
