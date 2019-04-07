@@ -1,0 +1,39 @@
+# Template file for 'font-dotsies'
+pkgname=font-dotsies
+version=3
+revision=1
+archs=noarch
+depends="font-util"
+short_desc="Font for the Dotsies alphabet, glyphs based on a binary representation"
+maintainer="B. Wilson <x@wilsonb.com>"
+license="Proprietary"
+homepage="http://dotsies.org/"
+distfiles="
+	http://dotsies.org/Dotsies.ttf
+	http://dotsies.org/Dotsies%20Training%20Wheels.ttf
+	http://dotsies.org/Dotsies%20Wide.ttf
+	http://dotsies.org/Dotsies%20Context.ttf
+	http://dotsies.org/Dotsies%20Striped.ttf
+	http://dotsies.org/Dotsies%20Roman.ttf"
+checksum="
+	d6023241583d417429e1a25febf98a25ec7bb835fd46f5333a6112518257e031
+	d5725f5815f9daa8776ad328b420237497fe9631d559e7d906451d56b8c22f82
+	6974b1e68825fcbb7579ed4f4a3fb7e4c696947118bc4ae9c834d65dcb02f676
+	b789521f17977a3d27fd711874df2e7141f59c762a5cfbd3ed673b762319e887
+	916a1432470ab14e7e14990fb3f55be0b498ea5a872953f2f68ec41b0959c3f9
+	b128d103a5db33ebb54239862a691d28b46b29e9f8c046a2380adbcb4f0dc186"
+repository=nonfree
+
+font_dirs="/usr/share/fonts/TTF"
+
+do_extract() {
+	cp "${XBPS_SRCDISTDIR}/${pkgname}-${version}"/*.ttf .
+	for f in *%20*.ttf; do
+		mv "${f}" "${f//%20/-}"
+	done
+}
+
+do_install() {
+	vmkdir usr/share/fonts/TTF
+	vcopy *.ttf usr/share/fonts/TTF
+}
