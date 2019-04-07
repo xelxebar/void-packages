@@ -1,0 +1,13 @@
+# Template file for 'ibus-table-others'
+pkgname=ibus-table-others
+version=1.3.9
+revision=1
+build_style=gnu-configure
+hostmakedepends="ibus-table pkg-config python3"
+depends="ibus-table"
+short_desc="Additional input methods for ibus-table"
+maintainer="B. Wilson <x@wilsonb.com>"
+license="GPL-3.0-or-later"
+homepage="https://github.com/moebiuscurve/ibus-table-others"
+distfiles="https://github.com/moebiuscurve/${pkgname}/releases/download/${version}/${pkgname}-${version}.tar.gz"
+checksum=63b14a809636a32a5d000a5dd44670a60eca3a872ff1c22d72617d2f6d52e008
