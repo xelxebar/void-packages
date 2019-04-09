@@ -1,0 +1,89 @@
+#!/usr/bin/env sh
+set -o errexit -o nounset -o noclobber
+
+XBPS_SRC=${XBPS_SRC:-./xbps-src}
+XBPS_CROSS=${XBPS_CROSS:-${0}}
+
+
+usage() {
+	cat <<-USAGE
+	USAGE: ${0} [-a <arch> [-a <arch> [..]]] -p <package>
+	In case no architectures are specified, defaults to all.
+	USAGE
+}
+
+error() {
+	_fmt="$(tput setaf 1)$(tput bold)"
+	fmt_="$(tput sgr0)"
+
+	printf '%s\n' "${@}" | while IFS= read -r line; do
+		[ "${line}" = '-n' ] && line=""
+		>&2 echo "${_fmt}ERROR: ${0}:${fmt_} ${line}"
+	done
+}
+
+fail() {
+	errno=${1:-1}; shift
+
+	error "${@}"
+	exit "${errno}"
+}
+
+cmd_from_args() {
+	pkg="${1}"
+	archs="${2}"
+
+	printf '%s \\\n' "${0}"
+	echo "${unchecked}" | sed 's/.*/\t-a & \\/'
+	printf '\t-p %s\n' "${pkg}"
+}
+
+xbps_src() {
+	"${XBPS_SRC}" "${@}" || exit 255
+}
+
+check() {
+	pkg=${1:-}; shift
+	archs="${*:-$(all_archs)}"
+	unchecked="${archs}"
+
+	[ -n "${archs}" ] || fail 1 "Unable to determine target architectures"
+
+	echo "${archs}" | while read -r arch; do
+		if xargs -L1 "${XBPS_CROSS}" -r xbps-src -a "${arch}" <<-XBPS
+				zap
+				binary-bootstrap
+				check ${pkg}
+			XBPS
+		then
+			unchecked="$(echo "${unchecked}" | sed "/${arch}/d")"
+		else
+			error "Failed checking ${pkg} on ${arch}"
+			error "Fix error and continue by running:"
+			error "$(cmd_from_args "${pkg}" "${unchecked}")"
+			exit 1
+		fi
+	done
+}
+
+all_archs() {
+	basename -s .sh common/cross-profiles/*.sh
+}
+
+
+while getopts ':a:p:r:' opt "${@}"; do
+	case "${opt}" in
+		a) archs="${archs:-}${archs:+\n}${OPTARG}";;
+		p) pkg="${OPTARG}";;
+		r) run="${OPTARG}";;
+		:) fail 1 "Missing option argument: -${OPTARG}" -n "$(usage)";;
+		*) fail 1 "Unrecognized option: -${OPTARG}"     -n "$(usage)";;
+	esac
+done
+shift $((OPTIND - 1))
+
+case "${run:-}" in
+	xbps-src) xbps_src -a "${archs}" "${@}";;
+	*) [ "${pkg:-}" ] || fail 1 "No packages specified" -n "$(usage)";
+	   check "${pkg}" "${archs:-}";;
+esac
