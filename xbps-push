@@ -1,0 +1,12 @@
+#!/usr/bin/env sh
+
+branch=${1}
+
+xargs -L1 git <<-GIT
+	checkout upstream
+	pull
+	rebase upstream master
+	push
+	rebase --onto upstream master "${branch}"
+	push origin "${branch}"
+GIT
