@@ -6,7 +6,7 @@ xargs -L1 git <<-GIT
 	checkout upstream
 	pull
 	rebase upstream master
-	push
+	push --force-with-lease
 	rebase --onto upstream master "${branch}"
 	push origin "${branch}"
 GIT
