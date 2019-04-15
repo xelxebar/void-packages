@@ -1,0 +1,16 @@
+# Template file for 'veles'
+pkgname=veles
+version=2018.05.0.TIF
+revision=1
+build_style=cmake
+configure_args="-D CMAKE_BUILD_TYPE=Release"
+hostmakedepends="cmake"
+makedepends="msgpack-devel python3-devel qt5-devel"
+depends="python3-msgpack python3-openssl"
+short_desc="Visualization tool for analyzing/reversing opaque binaries"
+maintainer="B. Wilson <x@wilsonb.com>"
+license="Apache-2.0"
+homepage="https://codisec.com/veles/"
+distfiles="https://github.com/codilime/veles/archive/${version}.tar.gz"
+checksum=914c057cb4e136e45ac0f8ddf4fead7a423a947393aa0bfe388e112aca5b78b7
+
