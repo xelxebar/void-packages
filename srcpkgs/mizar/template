@@ -1,0 +1,29 @@
+# Template file for 'mizar'
+pkgname=mizar
+version=8.1.09mml5.57.1355
+revision=1
+archs="arm* ppc* i686* x86_64*"
+create_wrksrc=yes
+short_desc="Digital proof checker for practical, formal mathematics"
+maintainer="B. Wilson <x@wilsonb.com>"
+license="GPL-3.0-or-later"
+homepage="http://mizar.org/"
+checksum=c1ab3cf9162838322a90992295480c086b800b85252941402c814403ea00f81f
+repository=nonfree
+
+case "${XBPS_TARGET_MACHINE}" in
+	arm*) _target=arm;;
+	ppc*) _target=ppc;;
+	*) _target=i386;;
+esac
+
+distfiles="http://mizar.uwb.edu.pl/~softadm/pub/system/i386-linux/${pkgname}-${version//mml/_}-${_target}-linux.tar"
+
+
+do_install() {
+	./install.sh --nodialog <<-EOF
+		${PKGDESTDIR}/usr/bin
+		${PKGDESTDIR}/usr/share/${pkgname}
+		${PKGDESTDIR}/usr/share/doc/${pkgname}
+	EOF
+}

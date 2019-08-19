@@ -1,0 +1,3 @@
+site='http://mizar.org/system/index.html'
+pattern='Latest official \(stable\) Mizar releases \(version \K[\d.]+, MML [\d.]+(?=\))'
+version="${version//mml/, MML }"
