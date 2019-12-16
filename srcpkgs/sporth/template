@@ -1,0 +1,88 @@
+# Template file for 'sporth'
+pkgname=sporth
+version=0.0
+revision=1
+create_wrksrc=no
+build_style=gnu-makefile
+hostmakedepends="git"
+makedepends="jack-devel libsndfile-devel libsoundpipe-devel"
+short_desc="Stack-based programming language for composing music"
+maintainer="B. Wilson <x@wilsonb.com>"
+license="MIT"
+homepage="https://paulbatchelor.github.io/proj/sporth"
+# distfiles=""
+# checksum=badbadbadbadbadbadbadbadbadbadbadbadbadbadbadbadbadbadbadbadbadb
+_git_url="https://github.com/PaulBatchelor/Sporth"
+_git_path="${XBPS_SRCDISTDIR}/${pkgname}-${version}/sporth.git"
+_doc="usr/share/doc/${pkgname}"
+_lib="usr/lib/${pkgname}"
+_share="usr/share/${pkgname}"
+
+
+do_fetch() {
+	[ -d "${_git_path}" ] || \
+		git clone --bare --depth 1 "${_git_url}" "${_git_path}"
+}
+
+do_extract() {
+	git clone "${_git_path}" "${wrksrc}"
+}
+
+pre_build() {
+	sed -i '/^default:/s/$/ $(BIN) libsporth.a/' Makefile
+	sed -i '/^# BUILD_JACK/s/# //' config.def.mk
+	sed -i "/^REF=/s,/usr/local/share/sporth,/${_doc}," util/ugen_lookup
+	find -name Makefile \
+		-exec sed -i 's/^\(\s*\)CFLAGS/\1override CFLAGS/' '{}' \+
+}
+
+do_install() {
+	vbin sporth
+	vdoc ugen_reference.txt
+
+	vmkdir "${_lib}"
+	vinstall util/ugen_lookup 755 "${_lib}"
+	vinstall util/spparse 755 "${_lib}"
+	vinstall util/sp_eval_file 755 "${_lib}"
+	# vinstall util/val 755 "${_lib}"
+	# vinstall util/float2bin 755 "${_lib}"
+	# vinstall util/sporthdot 755 "${_lib}"
+	# vinstall util/lsys 755 "${_lib}"
+	# vinstall util/ugen_dump 755 "${_lib}"
+	# vinstall util/sporth_tex 755 "${_lib}"
+
+	vmkdir "${_share}/polysporth"
+	vinstall ugens/polysporth/scm/init.scm 644 "${_share}/polysporth"
+	vinstall ugens/polysporth/scm/ps.scm 644 "${_share}/polysporth"
+
+	vmkdir "${_share}/examples"
+	vcopy examples/*.sp "${_share}/examples"
+
+	vlicense LICENSE
+}
+
+libsporth_package() {
+	short_desc+=" - library files"
+	make_build_target="libsporth.a"
+	pkg_install() {
+		vlicense LICENSE
+
+		vmkdir "${_share}/examples"
+		vcopy examples/api "${_share}/examples"
+
+		cd "$(mktemp -p . -d)"
+		ar x "${wrksrc}/libsporth.a"
+		vmkdir "usr/lib/${pkgname}"
+		vcopy *.o "usr/lib/${pkgname}"
+	}
+}
+
+libsporth-devel_package() {
+	depends="libsporth"
+	short_desc+=" - development files"
+	pkg_install() {
+		vinstall libsporth.a 644 usr/lib
+		vinstall h/sporth.h 644 usr/include
+		vinstall ugens/cdb/cdb.h 644 usr/include
+	}
+}

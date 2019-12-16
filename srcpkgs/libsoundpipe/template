@@ -1,0 +1,38 @@
+# Template file for 'libsoundpipe'
+pkgname=libsoundpipe
+version=1.7.0
+revision=1
+wrksrc="Soundpipe-${version}"
+build_style=gnu-makefile
+makedepends="libsndfile-devel"
+short_desc="Lightweight music DSP library"
+maintainer="B. Wilson <x@wilsonb.com>"
+license="MIT"
+homepage="https://paulbatchelor.github.io/proj/soundpipe.html"
+distfiles="https://github.com/PaulBatchelor/Soundpipe/archive/v${version}.tar.gz"
+checksum="2d6f6b155ad93d12f59ae30e2b0f95dceed27e0723147991da6defc6d65eadda"
+
+
+pre_build() {
+	find -regex '.*Makefile\|.*config.def.mk'\
+		-exec sed -i 's/^\(\s*\)CFLAGS/\1override CFLAGS/' '{}' \+
+}
+
+do_install() {
+	vlicense LICENSE
+
+	cd "$(mktemp -p . -d)"
+	ar x "${wrksrc}/libsoundpipe.a"
+	vmkdir usr/lib/soundpipe
+	vcopy *.o usr/lib/soundpipe
+}
+
+libsoundpipe-devel_package() {
+	depends="libsoundpipe>=${version}_${revision}"
+	short_desc+=" - development files"
+	pkg_install() {
+		vinstall libsoundpipe.a 755 usr/lib
+		vinstall h/soundpipe.h 644 usr/include
+		vinstall h/sp_base.h 644 usr/include
+	}
+}
