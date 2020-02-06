@@ -1,0 +1,24 @@
+# Template file for 'dyalog'
+pkgname=dyalog
+version=17.1
+revision=1
+archs="x86_64"
+build_style=fetch
+depends="ncurses-libs"
+short_desc="Dyalog APL interpreter"
+maintainer="B. Wilson <x@wilsonb.com>"
+license="dyalog"
+homepage="https://www.dyalog.com/"
+distfiles="https://www.dyalog.com/uploads/php/download.dyalog.com/download.php?file=linux_64_${version}.36845_unicode.x86_64.deb>${pkgname}-${version}.deb"
+checksum=6485a659020ca899179455f5704d2f990b759ce712a46f7e2e8e63fd6e782784
+repository=nonfree
+nostrip=yes
+
+do_extract() {
+	ar p ${XBPS_SRCDISTDIR}/${pkgname}-${version}/${pkgname}-${version}.deb data.tar.gz \
+	| tar -xzpf -
+}
+
+do_install() {
+	vcopy opt opt
+}
