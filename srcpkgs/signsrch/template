@@ -1,0 +1,21 @@
+# Template file for 'signsrch'
+pkgname=signsrch
+version=0.2.4
+revision=1
+archs="~*-musl"
+wrksrc=${pkgname}-${version}
+create_wrksrc=yes
+build_style=gnu-makefile
+make_build_args="-C src"
+short_desc="Forensic tool for recognizing binary blobs from known signatures"
+maintainer="B. Wilson <x@wilsonb.com>"
+license="GPL-3.0-or-later"
+homepage="https://www.aluigi.altervista.org/mytoolz.htm"
+distfiles="https://www.aluigi.altervista.org/mytoolz/${pkgname}.zip"
+checksum=d76433c7f8cfee1485bd1c27349ecc2d6bb86d41213d322dcb1fd17a60649c4b
+
+do_install() {
+	vmkdir usr/lib/signsrch
+	vinstall signsrch.sig 644 usr/lib/signsrch
+	vbin src/signsrch
+}

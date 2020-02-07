@@ -1,0 +1,1 @@
+pattern='name="signsrch">Signsrch \K[\d.]+(?=</a>)'
